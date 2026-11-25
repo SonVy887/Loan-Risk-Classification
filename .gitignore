@@ -9,10 +9,13 @@ __pycache__/
 # Environment variables
 .env
 
-# Large raw/processed data & model binaries (tùy chọn bỏ comment nếu muốn push models)
+# Large raw/processed data (giữ lại models/*.joblib để deploy API trực tiếp)
 data/raw/*.csv
 data/processed/*.csv
-models/*.joblib
+
+# Web (React + Vite)
+web/node_modules/
+web/dist/
 
 # OS & IDE
 .DS_Store

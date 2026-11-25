@@ -1,0 +1,110 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", "Segoe UI", Roboto, sans-serif;
+    background: linear-gradient(135deg, #e7eaef 0%, #dcdfe6 52%, #cfd4dc 100%);
+    color: #111827;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+/* Quả cầu 3D ánh bạc mờ giống ảnh mẫu */
+.silver-orb {
+  border-radius: 9999px;
+  background: radial-gradient(
+    circle at 32% 28%,
+    rgba(255, 255, 255, 0.96) 0%,
+    rgba(226, 230, 237, 0.88) 28%,
+    rgba(168, 175, 186, 0.78) 68%,
+    rgba(128, 136, 148, 0.65) 100%
+  );
+  box-shadow:
+    inset -12px -16px 28px rgba(71, 85, 105, 0.25),
+    inset 10px 10px 24px rgba(255, 255, 255, 0.9),
+    0 24px 48px rgba(15, 23, 42, 0.12);
+}
+
+/* Thẻ kính mờ nổi chuẩn ảnh mẫu */
+.glass-panel {
+  background: rgba(246, 247, 249, 0.78);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1.5px solid rgba(255, 255, 255, 0.92);
+  box-shadow:
+    0 24px 54px rgba(15, 23, 42, 0.09),
+    0 4px 12px rgba(15, 23, 42, 0.04),
+    inset 0 1px 1px rgba(255, 255, 255, 1);
+}
+
+/* Thanh Navbar kính nổi tách rời mép trên */
+.glass-navbar {
+  background: rgba(244, 245, 248, 0.72);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1.5px solid rgba(255, 255, 255, 0.92);
+  box-shadow:
+    0 14px 34px rgba(15, 23, 42, 0.07),
+    inset 0 1px 1px rgba(255, 255, 255, 0.95);
+}
+
+/* Nút viên thuốc 3D Liquid Glass dày bóng lồi */
+.liquid-pill-btn {
+  position: relative;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.92) 0%,
+    rgba(235, 238, 243, 0.78) 54%,
+    rgba(218, 223, 230, 0.86) 100%
+  );
+  border: 1.5px solid rgba(255, 255, 255, 0.98);
+  box-shadow:
+    0 10px 24px rgba(15, 23, 42, 0.1),
+    0 2px 5px rgba(15, 23, 42, 0.06),
+    inset 0 3px 6px rgba(255, 255, 255, 1),
+    inset 0 -3px 6px rgba(148, 163, 184, 0.35);
+  transition: all 160ms ease;
+}
+
+.liquid-pill-btn::before {
+  content: "";
+  position: absolute;
+  inset: 3px 10px auto 10px;
+  height: 44%;
+  border-radius: 9999px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.1));
+  pointer-events: none;
+}
+
+.liquid-pill-btn:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    0 14px 28px rgba(15, 23, 42, 0.13),
+    inset 0 3px 6px rgba(255, 255, 255, 1),
+    inset 0 -3px 6px rgba(148, 163, 184, 0.3);
+}
+
+.liquid-pill-btn:active {
+  transform: scale(0.985);
+}
+
+/* Ô nhập xám bạc mịn giống iOS trong ảnh mẫu */
+.ios-field {
+  width: 100%;
+  padding: 0.56rem 0.85rem;
+  border-radius: 0.8rem;
+  background: rgba(219, 223, 230, 0.65);
+  border: 1px solid rgba(203, 208, 217, 0.72);
+  color: #111827;
+  font-size: 0.875rem;
+  font-weight: 500;
+  outline: none;
+  transition: all 150ms ease;
+}
+
+.ios-field:focus {
+  background: rgba(255, 255, 255, 0.88);
+  border-color: rgba(148, 163, 184, 0.9);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.6);
+}

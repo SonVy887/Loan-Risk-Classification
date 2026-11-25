@@ -24,11 +24,11 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# Bật CORS để sau này Frontend (localhost:3000) gọi được API
+# Bật CORS cho phép cả localhost và domain Web khi deploy (Vercel) gọi API
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
