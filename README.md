@@ -7,7 +7,7 @@ Hệ thống Machine Learning tác vụ **Binary Classification** triển khai d
 ## 1. Cấu trúc dự án
 
 ```text
-D:\Machine Learning\
+loan-approval-ml/
 ├── data/
 │   ├── raw/loan_data.csv              # Dữ liệu gốc từ Kaggle
 │   └── processed/                     # train.csv (80%) & test.csv (20%) đã lọc outlier
@@ -53,15 +53,25 @@ Sau khi loại bỏ `7` bản ghi ngoại lai (`person_age > 100`), còn `44.993
 ## 3. Hướng dẫn cài đặt & chạy dự án
 
 ### Bước 1: Tạo môi trường ảo & cài thư viện
+Mở Terminal tại **thư mục gốc của dự án** và chạy:
+
+**Trên Windows (PowerShell):**
 ```powershell
-cd "D:\Machine Learning"
 python -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+```
+
+**Trên macOS / Linux:**
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
 ```
 
 ### Bước 2: Chạy REST API (FastAPI)
-```powershell
-.\.venv\Scripts\python.exe -m uvicorn api.main:app --reload --port 8000
+```bash
+uvicorn api.main:app --reload --port 8000
 ```
 Mở tài liệu tương tác Swagger UI tại: **`http://localhost:8000/docs`**
 
@@ -72,7 +82,7 @@ Các endpoint chính:
 - `POST /predict/compare` — Chạy đồng thời cả 4 thuật toán trên 1 hồ sơ và trả về mức độ đồng thuận (ưu tiên theo `best_model` nếu hòa `2/4`).
 
 ### Bước 3: Chạy kiểm thử tự động (`pytest`)
-```powershell
-.\.venv\Scripts\python.exe -m pytest -v
+```bash
+pytest -v
 ```
 Kết quả kỳ vọng: **`5 passed`** (`test_health`, `test_models_metadata`, `test_predict_best_model`, `test_predict_compare_all_4`, `test_predict_invalid_age_returns_422`).
