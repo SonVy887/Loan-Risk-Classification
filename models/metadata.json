@@ -1,0 +1,102 @@
+{
+  "best_model": "xgboost",
+  "dataset": "sumit12100012/loan-approval-classification",
+  "records_cleaned": 44993,
+  "classes": {
+    "0": "Từ chối",
+    "1": "Được duyệt"
+  },
+  "features": [
+    "person_age",
+    "person_gender",
+    "person_education",
+    "person_income",
+    "person_emp_exp",
+    "person_home_ownership",
+    "loan_amnt",
+    "loan_intent",
+    "loan_int_rate",
+    "loan_percent_income",
+    "cb_person_cred_hist_length",
+    "credit_score",
+    "previous_loan_defaults_on_file"
+  ],
+  "models": {
+    "logistic_regression": {
+      "accuracy": 0.8947,
+      "precision": 0.7717,
+      "recall": 0.747,
+      "f1": 0.7591,
+      "roc_auc": 0.9523,
+      "train_seconds": 0.21,
+      "confusion_matrix": [
+        [
+          6557,
+          442
+        ],
+        [
+          506,
+          1494
+        ]
+      ],
+      "model_size_kb": 5.9
+    },
+    "svm": {
+      "accuracy": 0.895,
+      "precision": 0.7726,
+      "recall": 0.7475,
+      "f1": 0.7598,
+      "roc_auc": 0.9522,
+      "train_seconds": 0.555,
+      "confusion_matrix": [
+        [
+          6559,
+          440
+        ],
+        [
+          505,
+          1495
+        ]
+      ],
+      "model_size_kb": 7.6
+    },
+    "random_forest": {
+      "accuracy": 0.9272,
+      "precision": 0.9001,
+      "recall": 0.7565,
+      "f1": 0.8221,
+      "roc_auc": 0.9732,
+      "train_seconds": 1.129,
+      "confusion_matrix": [
+        [
+          6831,
+          168
+        ],
+        [
+          487,
+          1513
+        ]
+      ],
+      "model_size_kb": 36843.0
+    },
+    "xgboost": {
+      "accuracy": 0.9382,
+      "precision": 0.8915,
+      "recall": 0.822,
+      "f1": 0.8554,
+      "roc_auc": 0.9792,
+      "train_seconds": 1.086,
+      "confusion_matrix": [
+        [
+          6799,
+          200
+        ],
+        [
+          356,
+          1644
+        ]
+      ],
+      "model_size_kb": 1281.1
+    }
+  }
+}
