@@ -9,6 +9,19 @@ const MODEL_LABELS = {
   xgboost: "XGBoost",
 };
 
+const TOP_FEATURES_XGB = [
+  { key: "previous_loan_defaults_on_file_No", label: "Chưa từng vỡ nợ (Không nợ xấu)", importance: 0.85083 },
+  { key: "person_home_ownership_RENT", label: "Nhà ở: Đang thuê (RENT)", importance: 0.023926 },
+  { key: "person_home_ownership_OWN", label: "Nhà ở: Sở hữu riêng (OWN)", importance: 0.018018 },
+  { key: "loan_percent_income", label: "Tỷ lệ khoản vay / Thu nhập", importance: 0.017891 },
+  { key: "loan_intent_VENTURE", label: "Mục đích: Khởi nghiệp / Đầu tư", importance: 0.011337 },
+  { key: "loan_int_rate", label: "Lãi suất vay (%)", importance: 0.009389 },
+  { key: "loan_intent_HOMEIMPROVEMENT", label: "Mục đích: Sửa chữa nhà", importance: 0.008558 },
+  { key: "loan_intent_DEBTCONSOLIDATION", label: "Mục đích: Gộp / Trả nợ cũ", importance: 0.007422 },
+  { key: "loan_intent_MEDICAL", label: "Mục đích: Y tế", importance: 0.006956 },
+  { key: "person_income", label: "Thu nhập hàng năm", importance: 0.006718 },
+];
+
 export default function ModelsTab() {
   const [data, setData] = useState(null);
   const [error, setError] = useState("");
@@ -187,6 +200,70 @@ export default function ModelsTab() {
             </div>
           );
         })}
+      </div>
+
+      {/* 3. Top 10 Feature Importance của XGBoost */}
+      <div className="glass-panel rounded-[28px] p-6 sm:p-7 space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h3 className="text-lg font-bold text-slate-900">
+              Top 10 Yếu Tố Ảnh Hưởng Mạnh Nhất (XGBoost)
+            </h3>
+            <p className="text-xs text-slate-500 mt-0.5">
+              Mức độ đóng góp của từng đặc trưng khi mô hình ra quyết định duyệt hoặc từ chối hồ sơ.
+            </p>
+          </div>
+          <span className="px-3.5 py-1 rounded-full bg-white/85 border border-white text-slate-700 text-xs font-semibold shadow-2xs">
+            Feature Importance
+          </span>
+        </div>
+
+        <div className="space-y-3 pt-1">
+          {TOP_FEATURES_XGB.map((item, idx) => {
+            const pct = item.importance * 100;
+            const barWidth = Math.max(3, (item.importance / TOP_FEATURES_XGB[0].importance) * 100);
+            return (
+              <div key={item.key} className="grid grid-cols-12 items-center gap-3 text-sm">
+                <div className="col-span-12 sm:col-span-5 flex items-baseline gap-2 min-w-0">
+                  <span className="text-xs font-semibold text-slate-400 w-5 shrink-0 tabular-nums">
+                    #{idx + 1}
+                  </span>
+                  <div className="min-w-0">
+                    <span className="font-medium text-slate-800 block truncate">
+                      {item.label}
+                    </span>
+                    <span className="text-[11px] font-mono text-slate-400 block truncate">
+                      {item.key}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="col-span-9 sm:col-span-5 h-2.5 rounded-full bg-slate-200/85 overflow-hidden shadow-inner">
+                  <div
+                    className="h-full rounded-full transition-all duration-500"
+                    style={{
+                      width: `${barWidth}%`,
+                      background:
+                        idx === 0
+                          ? "linear-gradient(90deg, #334155 0%, #475569 45%, #86efac 100%)"
+                          : "linear-gradient(90deg, #475569 0%, #94a3b8 100%)",
+                    }}
+                  />
+                </div>
+
+                <span className="col-span-3 sm:col-span-2 text-right font-semibold text-slate-700 tabular-nums text-xs sm:text-sm">
+                  {pct.toFixed(2)}%
+                </span>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="rounded-2xl bg-white/65 border border-white/80 px-4 py-3 text-xs text-slate-600 leading-relaxed">
+          <strong className="text-slate-800">Nhận xét:</strong> Yếu tố{" "}
+          <span className="font-mono text-slate-800">previous_loan_defaults_on_file_No</span>{" "}
+          chiếm tới <strong>85.08%</strong> trọng số quyết định — cho thấy lịch sử từng vỡ nợ là rào cản lớn nhất, tiếp theo mới đến tình trạng nhà ở, tỷ lệ vay/thu nhập và lãi suất.
+        </div>
       </div>
     </div>
   );
