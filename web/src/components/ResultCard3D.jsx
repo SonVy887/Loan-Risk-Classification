@@ -10,6 +10,7 @@ const MODEL_ORDER = [
 export default function ResultCard3D({
   singleResult,
   compareResult,
+  threshold = 0.5,
   error,
   loading,
 }) {
@@ -36,7 +37,12 @@ export default function ResultCard3D({
     compareResult?.results?.[0] ||
     null;
 
-  const isApproved = heroResult ? heroResult.prediction === 1 : true;
+  const isApproved = heroResult
+    ? heroResult.probabilities.approved >= threshold
+    : true;
+  const heroConfidencePct = heroResult
+    ? ((isApproved ? heroResult.probabilities.approved : heroResult.probabilities.rejected) * 100).toFixed(1)
+    : "—";
   const heroPct = heroResult
     ? (heroResult.probabilities.approved * 100).toFixed(1)
     : "—";
@@ -49,7 +55,7 @@ export default function ResultCard3D({
           key: m.key,
           label: m.label,
           pct: found ? found.probabilities.approved * 100 : 0,
-          approved: found ? found.prediction === 1 : false,
+          approved: found ? found.probabilities.approved >= threshold : false,
         };
       })
     : singleResult
@@ -60,7 +66,7 @@ export default function ResultCard3D({
             MODEL_ORDER.find((m) => m.key === singleResult.model_used)?.label ||
             singleResult.model_used,
           pct: singleResult.probabilities.approved * 100,
-          approved: singleResult.prediction === 1,
+          approved: singleResult.probabilities.approved >= threshold,
         },
       ]
     : [];
@@ -133,8 +139,7 @@ export default function ResultCard3D({
                     : "bg-rose-100/95 text-rose-800 border-rose-200"
                 }`}
               >
-                {isApproved ? "ĐƯỢC DUYỆT" : "TỪ CHỐI"} •{" "}
-                {(heroResult.confidence * 100).toFixed(1)}%
+                {isApproved ? "ĐƯỢC DUYỆT" : "TỪ CHỐI"} • {heroConfidencePct}%
               </span>
             ) : (
               <span className="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white/80 text-slate-600 border border-white">
@@ -238,6 +243,12 @@ export default function ResultCard3D({
                 </span>
               </div>
             ))}
+            <div className="pt-2 border-t border-slate-200/70 flex items-center justify-between text-xs text-slate-500">
+              <span>Ngưỡng duyệt áp dụng: {(threshold * 100).toFixed(0)}%</span>
+              <span>
+                {rows.filter((r) => r.approved).length}/{rows.length} mô hình đạt ngưỡng
+              </span>
+            </div>
           </div>
         )}
       </div>

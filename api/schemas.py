@@ -19,7 +19,7 @@ class LoanInput(BaseModel):
     loan_intent: Literal[
         "PERSONAL", "EDUCATION", "MEDICAL", "VENTURE", "HOMEIMPROVEMENT", "DEBTCONSOLIDATION"
     ]
-    loan_int_rate: float = Field(..., ge=0, le=50)
+    loan_int_rate: float = Field(..., ge=0, le=20)
     loan_percent_income: float | None = Field(default=None, ge=0, le=1)
     cb_person_cred_hist_length: float = Field(..., ge=0, le=60)
     credit_score: int = Field(..., ge=300, le=850)

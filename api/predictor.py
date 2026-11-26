@@ -38,6 +38,7 @@ class ModelRegistry:
 
         pipeline = self.models[resolved]
         df = pd.DataFrame([features.to_model_row()])
+        ## 
         pred = int(pipeline.predict(df)[0])
         proba = pipeline.predict_proba(df)[0]
 

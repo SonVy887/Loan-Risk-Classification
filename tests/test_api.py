@@ -60,3 +60,10 @@ def test_predict_invalid_age_returns_422():
     with TestClient(app) as client:
         res = client.post("/predict", json={"features": bad_loan, "model_name": "best"})
     assert res.status_code == 422
+
+
+def test_predict_invalid_interest_rate_returns_422():
+    bad_loan = {**SAMPLE_LOAN, "loan_int_rate": 21.0}  # Vượt ngưỡng trần 20%
+    with TestClient(app) as client:
+        res = client.post("/predict", json={"features": bad_loan, "model_name": "best"})
+    assert res.status_code == 422

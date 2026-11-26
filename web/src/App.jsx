@@ -50,11 +50,18 @@ function parseDots(str) {
   return digits ? Number(digits) : 0;
 }
 
+const RISK_PRESETS = [
+  { value: 0.3, label: "Nới lỏng", pct: "30%", hint: "Mở rộng khách hàng (Recall ~89.5%)" },
+  { value: 0.5, label: "Tiêu chuẩn", pct: "50%", hint: "Cân bằng mặc định (F1 ~85.5%)" },
+  { value: 0.7, label: "Siết chặt", pct: "70%", hint: "An toàn cao (Precision ~94.2%)" },
+];
+
 export default function App() {
   const [activeTab, setActiveTab] = useState("predict");
   const [form, setForm] = useState(SAMPLE_GOOD);
   const [modelName, setModelName] = useState("best");
   const [compareMode, setCompareMode] = useState(true);
+  const [threshold, setThreshold] = useState(0.5);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [singleResult, setSingleResult] = useState(null);
@@ -376,7 +383,7 @@ export default function App() {
                     type="number"
                     step="0.1"
                     min={0}
-                    max={50}
+                    max={20}
                     value={form.loan_int_rate}
                     onChange={(e) =>
                       updateField("loan_int_rate", Number(e.target.value))
@@ -479,6 +486,37 @@ export default function App() {
                 )}
               </div>
 
+              {/* Khẩu vị rủi ro / Ngưỡng quyết định */}
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between text-xs text-slate-600">
+                  <span className="font-medium text-slate-700">
+                    Khẩu vị rủi ro (Ngưỡng duyệt)
+                  </span>
+                  <span className="text-slate-500">
+                    {RISK_PRESETS.find((p) => p.value === threshold)?.hint}
+                  </span>
+                </div>
+                <div className="grid grid-cols-3 gap-1 p-1 rounded-2xl bg-white/60 border border-white/80 shadow-inner">
+                  {RISK_PRESETS.map((preset) => {
+                    const active = threshold === preset.value;
+                    return (
+                      <button
+                        key={preset.value}
+                        type="button"
+                        onClick={() => setThreshold(preset.value)}
+                        className={`py-2 px-2 rounded-xl text-xs transition-all cursor-pointer ${
+                          active
+                            ? "bg-white text-slate-900 font-semibold shadow-xs"
+                            : "text-slate-600 hover:text-slate-900 font-medium"
+                        }`}
+                      >
+                        {preset.label} ({preset.pct})
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
               {/* Nút chính Liquid Glass */}
               <button
                 type="submit"
@@ -496,6 +534,7 @@ export default function App() {
               <ResultCard3D
                 singleResult={singleResult}
                 compareResult={compareResult}
+                threshold={threshold}
                 error={error}
                 loading={loading}
               />
