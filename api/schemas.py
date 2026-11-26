@@ -56,6 +56,13 @@ class PredictRequest(BaseModel):
     features: LoanInput
     model_name: ModelChoice = "best"
 
+class ShapFactor(BaseModel):
+    feature: str
+    label: str
+    shap_value: float
+    direction: Literal["positive", "negative"]
+
+
 class SinglePredictionResponse(BaseModel):
     model_used: str
     is_best_model: bool
@@ -63,6 +70,7 @@ class SinglePredictionResponse(BaseModel):
     label: str
     confidence: float
     probabilities: dict[str, float]
+    explanation: list[ShapFactor] = []
 
 
 class ComparePredictionResponse(BaseModel):

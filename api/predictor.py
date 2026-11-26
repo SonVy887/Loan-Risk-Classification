@@ -2,12 +2,29 @@ import json
 from pathlib import Path
 import joblib
 import pandas as pd
+import xgboost as xgb
 
-from api.schemas import LoanInput, SinglePredictionResponse
+from api.schemas import LoanInput, ShapFactor, SinglePredictionResponse
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 MODELS_DIR = ROOT_DIR / "models"
 MODEL_NAMES = ["logistic_regression", "svm", "random_forest", "xgboost"]
+
+FEATURE_LABELS_VI = {
+    "previous_loan_defaults_on_file": "Lịch sử vỡ nợ",
+    "person_home_ownership": "Tình trạng nhà ở",
+    "loan_percent_income": "Tỷ lệ vay / Thu nhập",
+    "loan_int_rate": "Lãi suất vay",
+    "loan_intent": "Mục đích vay",
+    "person_income": "Thu nhập năm",
+    "loan_amnt": "Số tiền vay",
+    "credit_score": "Điểm tín dụng",
+    "person_emp_exp": "Kinh nghiệm làm việc",
+    "person_age": "Độ tuổi",
+    "cb_person_cred_hist_length": "Thời gian lịch sử tín dụng",
+    "person_education": "Trình độ học vấn",
+    "person_gender": "Giới tính",
+}
 
 
 class ModelRegistry:
@@ -31,6 +48,38 @@ class ModelRegistry:
         best = self.metadata.get("best_model")
         return best if best in self.models else next(iter(self.models.keys()), "")
 
+    @staticmethod
+    def _explain_xgboost(pipeline, df: pd.DataFrame, top_k: int = 5) -> list[ShapFactor]:
+        """Tính TreeSHAP trực tiếp từ XGBoost và gộp về 13 đặc trưng gốc."""
+        preprocess = pipeline.named_steps["preprocess"]
+        classifier = pipeline.named_steps["classifier"]
+        X_trans = preprocess.transform(df)
+        trans_names = preprocess.get_feature_names_out()
+        contribs = classifier.get_booster().predict(xgb.DMatrix(X_trans), pred_contribs=True)[0, :-1]
+
+        grouped: dict[str, float] = {col: 0.0 for col in FEATURE_LABELS_VI}
+        for name, val in zip(trans_names, contribs):
+            raw = name.split("__", 1)[1] if "__" in name else name
+            matched = next((col for col in FEATURE_LABELS_VI if raw == col or raw.startswith(f"{col}_")), None)
+            if matched:
+                grouped[matched] += float(val)
+
+        ranked = sorted(
+            ((col, val) for col, val in grouped.items() if abs(val) > 1e-4),
+            key=lambda item: abs(item[1]),
+            reverse=True,
+        )[:top_k]
+
+        return [
+            ShapFactor(
+                feature=col,
+                label=FEATURE_LABELS_VI[col],
+                shap_value=round(val, 4),
+                direction="positive" if val >= 0 else "negative",
+            )
+            for col, val in ranked
+        ]
+
     def predict_one(self, features: LoanInput, model_name: str = "best") -> SinglePredictionResponse:
         resolved = self.best_model_name if model_name == "best" else model_name
         if resolved not in self.models:
@@ -45,6 +94,7 @@ class ModelRegistry:
         prob_rejected = round(float(proba[0]), 4)
         prob_approved = round(float(proba[1]), 4)
         confidence = prob_approved if pred == 1 else prob_rejected
+        explanation = self._explain_xgboost(pipeline, df) if resolved == "xgboost" else []
 
         return SinglePredictionResponse(
             model_used=resolved,
@@ -53,6 +103,7 @@ class ModelRegistry:
             label="Được duyệt" if pred == 1 else "Từ chối",
             confidence=confidence,
             probabilities={"rejected": prob_rejected, "approved": prob_approved},
+            explanation=explanation,
         )
 
     def predict_compare(self, features: LoanInput) -> dict:

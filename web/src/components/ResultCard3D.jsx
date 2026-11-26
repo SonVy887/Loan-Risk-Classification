@@ -252,6 +252,70 @@ export default function ResultCard3D({
           </div>
         )}
       </div>
+
+      {/* 3. Giải thích hồ sơ bằng TreeSHAP (XGBoost) */}
+      {(() => {
+        const shapSource =
+          (singleResult?.explanation?.length ? singleResult : null) ||
+          compareResult?.results?.find((r) => r.model_used === "xgboost" && r.explanation?.length);
+        const factors = shapSource?.explanation || [];
+        if (factors.length === 0 || error) return null;
+        const maxAbs = Math.max(...factors.map((f) => Math.abs(f.shap_value)), 0.01);
+
+        return (
+          <div className="glass-panel w-full rounded-[26px] px-7 py-5 space-y-3.5">
+            <div className="flex items-center justify-between gap-2">
+              <div>
+                <h3 className="text-sm font-bold text-slate-900">
+                  Giải Thích Hồ Sơ (TreeSHAP)
+                </h3>
+                <p className="text-[11px] text-slate-500">
+                  Top {factors.length} yếu tố tác động mạnh nhất từ mô hình XGBoost
+                </p>
+              </div>
+              <span className="px-2.5 py-0.5 rounded-full bg-white/80 border border-white text-[10px] font-semibold text-slate-600">
+                XAI
+              </span>
+            </div>
+
+            <div className="space-y-2.5">
+              {factors.map((f) => {
+                const isPos = f.direction === "positive";
+                const widthPct = Math.max(8, (Math.abs(f.shap_value) / maxAbs) * 100);
+                return (
+                  <div key={f.feature} className="space-y-1">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="font-medium text-slate-800">{f.label}</span>
+                      <span
+                        className={`font-semibold tabular-nums ${
+                          isPos ? "text-[#0f5132]" : "text-rose-700"
+                        }`}
+                      >
+                        {isPos ? "+" : ""}
+                        {f.shap_value.toFixed(2)}{" "}
+                        <span className="font-normal text-[11px]">
+                          ({isPos ? "tăng duyệt" : "kéo giảm"})
+                        </span>
+                      </span>
+                    </div>
+                    <div className="h-1.5 w-full rounded-full bg-slate-200/80 overflow-hidden">
+                      <div
+                        className="h-full rounded-full transition-all duration-500"
+                        style={{
+                          width: `${widthPct}%`,
+                          background: isPos
+                            ? "linear-gradient(90deg, #10b981 0%, #34d399 100%)"
+                            : "linear-gradient(90deg, #f43f5e 0%, #fb7185 100%)",
+                        }}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }
