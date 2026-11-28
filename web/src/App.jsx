@@ -77,6 +77,15 @@ export default function App() {
   };
 
   const runAnalysis = useCallback(async (targetForm, isCompare, chosenModel) => {
+    if (!targetForm.person_income || Number(targetForm.person_income) <= 0) {
+      setError("Thu nhập hàng năm phải lớn hơn 0 để đủ điều kiện thẩm định khoản vay.");
+      return;
+    }
+    if (!targetForm.loan_amnt || Number(targetForm.loan_amnt) <= 0) {
+      setError("Số tiền vay phải lớn hơn 0.");
+      return;
+    }
+
     setLoading(true);
     setError("");
     try {
