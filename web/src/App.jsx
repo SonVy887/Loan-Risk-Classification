@@ -486,11 +486,11 @@ export default function App() {
                 )}
               </div>
 
-              {/* Khẩu vị rủi ro / Ngưỡng quyết định */}
+              {/* Chế độ thẩm định / Ngưỡng quyết định */}
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between text-xs text-slate-600">
                   <span className="font-medium text-slate-700">
-                    Khẩu vị rủi ro (Ngưỡng duyệt)
+                    Chế độ thẩm định (Ngưỡng duyệt)
                   </span>
                   <span className="text-slate-500">
                     {RISK_PRESETS.find((p) => p.value === threshold)?.hint}
