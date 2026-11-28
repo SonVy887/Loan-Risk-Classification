@@ -225,7 +225,7 @@ export default function DatasetTab() {
               Huấn luyện &amp; Xuất
             </span>
             <p className="text-slate-300 leading-relaxed">
-              5-Fold CV + Tuning siêu tham số, đóng gói cả Pipeline.
+              5-Fold CV &amp; Tuning → Train lại trên 100% Train, chấm Test &amp; đóng gói Pipeline.
             </p>
             <span className="text-[11px] font-semibold text-[#86efac] pt-1 border-t border-white/15">
               4 file .joblib → FastAPI
